@@ -375,7 +375,7 @@
 </head>
 <body>
     <nav>
-        <div class="brand" id="main-brand">SAYEM <span id="main-subtitle" style="font-weight: 300; opacity: 0.5;">HUB</span></div>
+        <div class="brand" id="main-brand">ROG <span id="main-subtitle" style="font-weight: 300; opacity: 0.5;">HUB</span></div>
     </nav>
 
     <!-- Header Ad Slot -->
@@ -391,7 +391,7 @@
                 <div class="generator-controls">
                     <input type="text" id="secret-key" placeholder="BASE32-SECRET-CODE" spellcheck="false">
                     <button class="btn paste-btn" onclick="pasteSecret()">
-                        <i class="fa-solid fa-clipboard"></i> Paste Code
+                        <i class="fa-solid fa-clipboard"></i> Paste
                     </button>
                 </div>
 
@@ -429,12 +429,12 @@
 
     <!-- Lockdown Overlays -->
     <div id="maintenance-overlay" class="overlay">
-        <h1 style="color: var(--primary);">SYSTEM UPDATE</h1>
+        <h1 style="color: var(--primary);">🔧 Syste Updating... </h1>
         <p id="maintenance-text">We are currently upgrading the network infrastructure. Please return shortly.</p>
     </div>
 
     <div id="block-overlay" class="overlay">
-        <h1>ACCESS DENIED</h1>
+        <h1>📛 Access Denied</h1>
         <p>The platform is currently in high-security lockdown mode. All public transactions are suspended.</p>
     </div>
 
@@ -477,8 +477,8 @@
             db.ref('settings').on('value', snap => {
                 const s = snap.val() || {};
                 const status = s.siteStatus || 'active';
-                const brandName = s.brandName || 'SAYEM';
-                const brandSubtitle = s.brandSubtitle || 'HUB';
+                const brandName = s.brandName || 'ROG | HUB';
+                const brandSubtitle = s.brandSubtitle || '';
 
                 document.getElementById('maintenance-overlay').style.display = status === 'maintenance' ? 'flex' : 'none';
                 document.getElementById('block-overlay').style.display = status === 'blocked' ? 'flex' : 'none';
