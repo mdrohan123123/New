@@ -1,44 +1,43 @@
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sayem | Secure Portal</title>
     <meta name="theme-color" content="#0b0d17">
-
     <!-- Firebase SDK v9 Compat -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.1.2/otpauth.umd.min.js"></script>
-
     <!-- Premium Fonts -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         :root {
             --bg-deep: #0b0d17;
             --bg-surface: #141625;
             --primary: #38bdf8;
+            --primary-light: #7dd3fc;
+            --primary-dark: #0e7490;
+            --primary-rgb: 56, 189, 248;
             --secondary: #818cf8;
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --accent-purple: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
             --border: rgba(255, 255, 255, 0.05);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --toast-bg: #10b981; /* fixed dark green */
+            --error: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        html,
-        body {
+        html, body {
             width: 100%;
             overflow-x: hidden;
             background-color: var(--bg-deep);
@@ -52,7 +51,7 @@
             flex-direction: column;
         }
 
-        /* Navigation - Mobile First */
+        /* Navigation */
         nav {
             padding: 1rem;
             background: rgba(11, 13, 23, 0.85);
@@ -77,7 +76,7 @@
             letter-spacing: -0.02em;
         }
 
-        /* Hero Container - Mobile First */
+        /* Container */
         .container {
             width: 100%;
             max-width: 1300px;
@@ -134,7 +133,6 @@
             letter-spacing: 0.05em;
             margin-bottom: 1rem;
             cursor: pointer;
-            transition: var(--transition);
             word-break: break-all;
         }
 
@@ -170,13 +168,12 @@
             color: white;
             font-family: 'JetBrains Mono', monospace;
             outline: none;
-            transition: var(--transition);
             font-size: 1rem;
         }
 
         input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
         }
 
         .btn {
@@ -187,7 +184,6 @@
             border-radius: 1rem;
             font-weight: 800;
             cursor: pointer;
-            transition: var(--transition);
             text-transform: uppercase;
             letter-spacing: 0.08em;
             display: inline-flex;
@@ -197,12 +193,20 @@
             font-size: 0.9rem;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         }
 
         .btn:hover {
-            background: #7dd3fc;
+            background: var(--primary);
+            filter: brightness(1.1);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(var(--primary-rgb), 0.4);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            filter: brightness(0.9);
+            box-shadow: 0 5px 10px -3px rgba(var(--primary-rgb), 0.5);
         }
 
         @media (min-width: 768px) {
@@ -226,6 +230,17 @@
             color: white !important;
         }
 
+        .paste-btn:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            filter: none !important;
+            box-shadow: none !important;
+        }
+
+        .paste-btn:active {
+            transform: scale(0.97);
+            background: rgba(255, 255, 255, 0.15) !important;
+        }
+
         /* News Feed */
         .news-item {
             background: rgba(255, 255, 255, 0.02);
@@ -233,7 +248,19 @@
             border-radius: 1.2rem;
             padding: 1.25rem;
             margin-bottom: 1rem;
-            transition: var(--transition);
+        }
+
+        .news-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--bg-deep);
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .news-title {
@@ -316,15 +343,16 @@
             bottom: 2rem;
             right: 2rem;
             left: 2rem;
-            background: #10b981;
+            background: var(--toast-bg);
             color: white;
             padding: 1rem;
             border-radius: 1rem;
             font-weight: 800;
             text-align: center;
             transform: translateY(200%);
-            transition: var(--transition);
+            transition: transform 0.3s ease;
             z-index: 3000;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
         }
 
         @media (min-width: 768px) {
@@ -338,14 +366,16 @@
         #toast.show {
             transform: translateY(0);
         }
+
+        /* Maintenance & Block specific */
+        #block-overlay h1 {
+            color: var(--error);
+        }
     </style>
 </head>
-
 <body>
-
     <nav>
-        <div class="brand" id="main-brand">SAYEM <span id="main-subtitle"
-                style="font-weight: 300; opacity: 0.5;">HUB</span></div>
+        <div class="brand" id="main-brand">SAYEM <span id="main-subtitle" style="font-weight: 300; opacity: 0.5;">HUB</span></div>
     </nav>
 
     <!-- Header Ad Slot -->
@@ -356,8 +386,7 @@
         <section>
             <div class="card">
                 <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Security Generator</div>
-                <p style="color: var(--text-dim); margin-bottom: 2rem;">Enter your Base32 secret key to generate timed
-                    security codes.</p>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Enter your Base32 secret key to generate timed security codes.</p>
 
                 <div class="generator-controls">
                     <input type="text" id="secret-key" placeholder="BASE32-SECRET-CODE" spellcheck="false">
@@ -405,7 +434,7 @@
     </div>
 
     <div id="block-overlay" class="overlay">
-        <h1 style="color: #ef4444;">ACCESS DENIED</h1>
+        <h1>ACCESS DENIED</h1>
         <p>The platform is currently in high-security lockdown mode. All public transactions are suspended.</p>
     </div>
 
@@ -420,16 +449,31 @@
             databaseURL: "https://test-e0321-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "test-e0321"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         let currentSecret = "";
         let timer = null;
 
+        // Helper: lighten/darken hex (simple version for demo)
+        function adjustColor(hex, percent) {
+            hex = hex.replace('#', '');
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            r = Math.min(255, Math.max(0, r + (r * percent / 100)));
+            g = Math.min(255, Math.max(0, g + (g * percent / 100)));
+            b = Math.min(255, Math.max(0, b + (b * percent / 100)));
+            return `#${((1 << 24) + (Math.round(r) << 16) + (Math.round(g) << 8) + Math.round(b)).toString(16).slice(1)}`;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "56, 189, 248";
+        }
+
         // 2. Realtime Sync
         function initSync() {
-            // Settings & Enforcement
             db.ref('settings').on('value', snap => {
                 const s = snap.val() || {};
                 const status = s.siteStatus || 'active';
@@ -440,7 +484,6 @@
                 document.getElementById('block-overlay').style.display = status === 'blocked' ? 'flex' : 'none';
                 document.getElementById('maintenance-text').textContent = s.noticeMessage || 'System update in progress.';
 
-                // Semantic Update
                 document.getElementById('main-brand').innerHTML = `${brandName} <span id="main-subtitle">${brandSubtitle}</span>`;
                 document.title = `${brandName} | Secure Portal`;
 
@@ -453,7 +496,6 @@
                 metaDesc.content = s.metaDescription || "Secure 2FA Hub";
             });
 
-            // Appearance
             db.ref('appearance').on('value', snap => {
                 const a = snap.val() || {};
                 const primary = a.primaryColor || '#38bdf8';
@@ -461,13 +503,19 @@
                 const glass = a.glassIntensity || '20px';
 
                 document.documentElement.style.setProperty('--primary', primary);
-                document.documentElement.style.setProperty('--bg-sidebar', `rgba(${hexToRgb(primary)}, 0.1)`);
+                const light = adjustColor(primary, 20);
+                const dark = adjustColor(primary, -20);
+                const rgb = hexToRgb(primary);
+                document.documentElement.style.setProperty('--primary-light', light);
+                document.documentElement.style.setProperty('--primary-dark', dark);
+                document.documentElement.style.setProperty('--primary-rgb', rgb);
+
+                document.documentElement.style.setProperty('--bg-sidebar', `rgba(${rgb}, 0.1)`);
                 document.documentElement.style.setProperty('--border-radius', radius);
                 document.documentElement.style.setProperty('--glass-blur', glass);
 
                 if (a.fontHeading) document.body.style.fontFamily = a.fontHeading;
 
-                // Update dynamic CSS
                 let dynamicStyle = document.getElementById('dynamic-appearance');
                 if (!dynamicStyle) {
                     dynamicStyle = document.createElement('style');
@@ -475,13 +523,20 @@
                     document.head.appendChild(dynamicStyle);
                 }
                 dynamicStyle.textContent = `
-                    .card { border-radius: ${radius} !important; backdrop-filter: blur(${glass}) !important; -webkit-backdrop-filter: blur(${glass}) !important; }
-                    .btn, input { border-radius: calc(${radius} * 0.5) !important; }
-                    .news-item { border-radius: calc(${radius} * 0.7) !important; }
+                    .card {
+                        border-radius: ${radius} !important;
+                        backdrop-filter: blur(${glass}) !important;
+                        -webkit-backdrop-filter: blur(${glass}) !important;
+                    }
+                    .btn, input {
+                        border-radius: calc(${radius} * 0.5) !important;
+                    }
+                    .news-item {
+                        border-radius: calc(${radius} * 0.7) !important;
+                    }
                 `;
             });
 
-            // CMS portal
             db.ref('articles').on('value', snap => {
                 const feed = document.getElementById('news-feed');
                 feed.innerHTML = "";
@@ -505,7 +560,6 @@
                 });
             });
 
-            // Ads Cluster
             db.ref('ads').on('value', snap => {
                 const a = snap.val() || {};
                 if (!a.enabled) {
@@ -525,7 +579,6 @@
             if (!container || !code || container.dataset.code === code) return;
             container.dataset.code = code;
             container.innerHTML = code;
-            // Execute scripts if any
             const scripts = container.querySelectorAll('script');
             scripts.forEach(s => {
                 const newScript = document.createElement('script');
@@ -534,7 +587,6 @@
                 document.head.appendChild(newScript).parentNode.removeChild(newScript);
             });
         }
-
 
         // 3. Generator Interaction
         function initGenerator() {
@@ -570,7 +622,9 @@
             timer = setInterval(cycleOTP, 1000);
         }
 
-        function stopOTP() { if (timer) clearInterval(timer); }
+        function stopOTP() {
+            if (timer) clearInterval(timer);
+        }
 
         function cycleOTP() {
             const seconds = new Date().getSeconds();
@@ -583,34 +637,35 @@
 
         function updateOTP() {
             try {
-                const totp = new OTPAuth.TOTP({
-                    secret: currentSecret,
-                    encoding: 'base32'
-                });
+                const totp = new OTPAuth.TOTP({ secret: currentSecret, encoding: 'base32' });
                 document.getElementById('otp-code').textContent = totp.generate();
             } catch (e) {
                 document.getElementById('otp-code').textContent = "INVALID";
             }
         }
 
+        // আপডেটেড কপি ফাংশন – এরর হ্যান্ডলিং যোগ করা হয়েছে
         window.copyOTP = function () {
             const code = document.getElementById('otp-code').textContent;
-            if (code === "INVALID" || code === "000000") return;
+            if (code === "INVALID" || code === "000000") {
+                notify("No valid code to copy");
+                return;
+            }
             navigator.clipboard.writeText(code).then(() => {
                 notify("Code Synced to Clipboard");
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                notify("Copy failed. Please try again.");
             });
         };
 
+        // আপডেটেড নোটিফিকেশন – আগের টাইমআউট ক্লিয়ার করে
         function notify(msg) {
             const t = document.getElementById('toast');
             t.textContent = msg;
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
-        }
-
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "56, 189, 248";
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => t.classList.remove('show'), 2500);
         }
 
         // 4. Launch
@@ -618,7 +673,6 @@
             initSync();
             initGenerator();
 
-            // Unique Member Registration
             let visitorId = localStorage.getItem('sayem_v_id');
             const userRef = db.ref('users');
 
@@ -633,14 +687,13 @@
                     joinedAt: firebase.database.ServerValue.TIMESTAMP
                 });
             } else {
-                // Verification ping
                 userRef.child(visitorId).child('lastActive').set(firebase.database.ServerValue.TIMESTAMP);
             }
 
-            // Analytics Ping
-            db.ref('analytics/visits').push({ timestamp: firebase.database.ServerValue.TIMESTAMP });
+            db.ref('analytics/visits').push({
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
         });
     </script>
 </body>
-
 </html>
